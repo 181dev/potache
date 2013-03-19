@@ -1,0 +1,38 @@
+<h1>Potache</h1>
+
+<h2>Apps</h2>
+
+<script>
+    $(function(){
+        $("#create_app").on("click", function(){
+           location.href = "edit/" + $("#create_app_name").val(); 
+        });
+    });
+    
+</script>
+
+<ul>
+{{#colls}}
+  <li><a href="/{{.}}">{{.}}</a></li>
+{{/colls}}
+</ul>
+
+<div class="well">
+<label for="name">Application Name：</label>
+<input id="create_app_name">
+<button id="create_app" class="btn">Add New</button>
+</div>
+
+<h2>Customize Potache</h2>
+
+<ul>
+  <li>
+    <a href="/edit/index">Edit Index</a>
+  </li>
+  <li>
+    <a href="/edit/edit">Edit EditorView</a>
+  </li>
+  <li>
+    <a href="/edit/layout">Edit Layout</a>
+  </li>
+</ul>

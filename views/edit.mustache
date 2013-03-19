@@ -1,0 +1,52 @@
+<style>
+#editor {
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    border-bottom-right-radius: 0px;
+    margin-top: 5px;
+    height: 525px;
+}
+</style>
+
+<div class="navbar">
+<div class="navbar-inner">
+<ul class="nav">
+<li><a href="/">Home</a></li>
+<li><a href="/{{name}}">{{name}}</a></li>
+<li class="active"><a href="/edit/{{name}}">Edit</a></li>
+</ul>
+</div>
+</div>
+
+<input name="name" class="span12" id="post_name" value="{{name}}"><br>
+<div id="editor">{{body}}</div>
+<button class="btn btn-primary" id="saveCode">Save (Ctrl+S) </button>
+<div class="log"></div>
+<script src="/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+
+    function saveCode(){
+        $("#saveCode").text("Writing....");
+        $.post("/edit", { name: $("#post_name").val(), body: editor.getValue()}, function(){
+            $("#saveCode").text("Saved.") }
+        );
+    }
+
+    $(function(){
+        $("#saveCode").on("click", function(){
+            saveCode();
+        });
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/html");
+
+        editor.commands.addCommand({
+            name: 'Save',
+            bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+            exec: function(editor) {
+                saveCode();    
+            },
+            readOnly: true // false if this command should not apply in readOnly mode
+        });
+    });
+</script>

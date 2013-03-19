@@ -1,0 +1,39 @@
+{{>develop}}
+
+<h1>Sample Page</h1>
+
+<!-- Form -->
+<form id="send">
+    <label for="author">Author:</label>
+    <input name="author" class="span8">
+    <label for="contents">Contents:</label>
+    <textarea name="contents" class="span8"></textarea>
+    <br><button id="go" type="button" class="btn btn-primary">Post</button>
+</form>
+
+<!-- Please use Ajax -->
+<script>
+    $(function(){
+        $("#go").click(go);
+    });
+    function go(){
+        var form = $("#send");
+        var param = {};
+        $(form.serializeArray()).each(function(i, v) {
+            param[v.name] = v.value;
+        });
+        var json = $.toJSON(param);
+        $.post("/{{name}}", {"action": "insert", "data" : json}, function(){
+            location.reload();
+        })
+    }
+</script>
+
+<!-- listing -->
+
+<h1>Posts</h1>
+<ul>
+    {{#items}}
+    <li>{{author}} : {{contents}}</li>
+    {{/items}}
+</ul>
