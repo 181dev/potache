@@ -3,7 +3,6 @@
 require 'sinatra/base'
 require 'sinatra/mustache'
 require 'mongo'
-#require "sinatra/reloader"
 require 'yaml'
 require 'json'
 
@@ -11,27 +10,32 @@ require 'json'
 # POTACHE
 # MIT
 class App < Sinatra::Base
+  include Mongo
   COLL_SYSTEM = 'POTACHE_SYSTEM'
-  config = YAML::load(File.open('config.yml'))
+  set :environment, :production
 
   configure :development do
-    #register Sinatra::Reloader
   end
 
   configure :production do
   end
 
+  def get_db
+    @client = MongoClient.from_uri
+    @db     = @client.db['potache']
+  end
+
   get '/' do
     @colls = []
-    Mongo::Connection.new(config["mongo_host"]).db(config["mongo_db"]).collections.each{|x|
-      if x.name != 'system.indexes' then
-        @colls << x.name
-      end
+    get_db()
+    @db[COLL_SYSTEM].find.each{|x|
+      @colls << x["name"]
     }
     mustache :index
   end
 
   get '/edit/:name' do
+    get_db()
     @name = params[:name]
     @body = ""
     if FileTest.exist?("./views/" + @name + ".mustache") then
@@ -43,18 +47,22 @@ class App < Sinatra::Base
   end
 
   post '/edit' do
-    @name = params[:name] + ".mustache"
+    get_db()
+    @name = params[:name]
     @body = params[:body]
-    File.write("./views/" + @name , @body)
+    File.write("./views/" + @name + ".mustache" , @body)
+    if !(["layout","edit","index","develop","edit"].include?(@name)) then
+      @db[COLL_SYSTEM].update({"name"=>@name}, {"name"=>@name}, :upsert=>true)
+    end
     "Success"
   end
 
   get '/:name' do
+    get_db()
     content_type :html, 'charset' => 'utf-8'
     @name = params[:name]
     if FileTest.exist?("./views/" + @name + ".mustache") then
-      db = Mongo::Connection.new(config["mongo_host"]).db(config["mongo_db"])
-      @items = db[@name].find.sort([:_id, :desc]).to_a
+      @items = @db[@name].find.sort([:_id, :desc]).to_a
       mustache @name.to_sym
     else
       mustache :edit
@@ -62,16 +70,10 @@ class App < Sinatra::Base
   end
 
   post '/:name' do
-    db = Mongo::Connection.new(config["mongo_host"]).db(config["mongo_db"])
-    #request.body.rewind
+    get_db()
     p params["action"]
-    p params['data']
-    p params['data'].encoding
     data = JSON.parse params['data'].force_encoding("utf-8")
-    p data['author']
-    p data['author'].encoding
-    #data = JSON.parse request.body.read.force_encoding("utf-8")
-    db[params[:name]].insert(data)
+    @db[params[:name]].insert(data)
     'Success'
   end
 end

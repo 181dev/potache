@@ -1,10 +1,16 @@
-<div class="navbar">
-<div class="navbar-inner">
-<ul class="nav">
-<li><a href="/">Home</a></li>
-<li class="active"><a href="/{{name}}">{{name}}</a></li>
-<li><a href="/edit/{{name}}">Edit</a></li>
-</ul>
-</div>
-</div>
+<div class="navbar navbar-fixed-top">
+  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
 
+  <a class="navbar-brand" href="/">Potache</a>
+
+  <div class="nav-collapse collapse navbar-responsive-collapse">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/{{name}}">Preview</a></li>
+      <li><a href="/edit/{{name}}">Edit</a></li>
+    </ul>
+  </div><!-- /.nav-collapse -->
+</div>

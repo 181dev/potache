@@ -1,3 +1,4 @@
 require './app.rb'
-use Rack::ShowExceptions
-run App.new
+#use Rack::ShowExceptions
+#run App.new
+run App
