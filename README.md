@@ -15,7 +15,7 @@ Get started:
     MongoLab等でデータベースを作成し、DBの読み書きのできるユーザを作成後、URIを取得しておく。
 
     $ bundle install
-    $ echo "export MONGODB_URI=MongoDBのURI" >> .bashrc
+    $ echo "export MONGODB_URI=MongoDBのURI" >> ~/.bashrc
     $ rackup
 
 
